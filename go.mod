@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/Khan/genqlient v0.7.0
 	github.com/cometbft/cometbft v1.0.0-rc1
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/spf13/viper v1.19.0
 	golang.org/x/sync v0.7.0
 )
@@ -47,7 +48,6 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cometbft/cometbft-db v0.12.0 // indirect
-	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-kit/kit v0.13.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect

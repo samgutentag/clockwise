@@ -19,6 +19,12 @@ func (s *ApiServer) Start() error {
 	
 	e.GET("/health_check", s.getHealth)
 
+	// e.GET("/users")
+	// e.GET("/tracks")
+	
+	// e.POST("/users")
+	// e.POST("/tracks")
+
 	return e.Start(":8080")
 }
 

@@ -84,7 +84,8 @@ func run() error {
 
 	g.Go(func() error {
 		time.Sleep(10 * time.Second)
-		return simulation(logger, nodeID)
+		simulation(logger, nodeID, rpc)
+		return nil
 	})
 
 	return g.Wait()

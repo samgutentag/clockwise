@@ -1,9 +1,12 @@
 package main
 
 import (
+	stdbytes "bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	abcitypes "github.com/cometbft/cometbft/abci/types"
@@ -79,4 +82,21 @@ func (l NoopLogger) Error(msg string, keyvals ...any) {}
 
 func (l NoopLogger) With(keyvals ...any) log.Logger {
 	return l
+}
+
+func SendPost(endpoint string, data any) (map[string]interface{}, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+			return nil, err
+	}
+
+	response, err := http.Post(endpoint, "application/json", stdbytes.NewBuffer(jsonData))
+	if err != nil {
+			return nil, err
+	}
+	defer response.Body.Close()
+
+	var result map[string]interface{}
+	json.NewDecoder(response.Body).Decode(&result)
+	return result, nil
 }
