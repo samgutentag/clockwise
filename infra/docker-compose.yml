@@ -14,7 +14,7 @@ services:
     ports:
       - "6600:26656" # CometBFT P2P Server
       - "6601:26657" # CometBFT RPC Server
-      - "6603:26659" # Clockwise GQL Server
+      - "6603:8080" # Clockwise GQL Server
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.2
@@ -36,7 +36,7 @@ services:
     ports:
       - "6610:26656"
       - "6611:26657"
-      - "6613:26659"
+      - "6613:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.3
@@ -58,7 +58,7 @@ services:
     ports:
       - "6620:26656"
       - "6621:26657"
-      - "6623:26659"
+      - "6623:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.4
@@ -80,7 +80,7 @@ services:
     ports:
       - "6630:26656"
       - "6631:26657"
-      - "6633:26659"
+      - "6633:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.5
@@ -102,7 +102,7 @@ services:
     ports:
       - "6640:26656"
       - "6641:26657"
-      - "6643:26659"
+      - "6643:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.6
@@ -124,7 +124,7 @@ services:
     ports:
       - "6650:26656"
       - "6651:26657"
-      - "6653:26659"
+      - "6653:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.7
@@ -146,7 +146,7 @@ services:
     ports:
       - "6660:26656"
       - "6661:26657"
-      - "6663:26659"
+      - "6663:8080"
     networks:
       audius-testnet:
         ipv4_address: 192.167.10.8

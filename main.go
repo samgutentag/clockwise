@@ -7,9 +7,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	_ "github.com/Khan/genqlient/generate"
 	"github.com/alecsavvy/clockwise/db"
+	"github.com/cometbft/cometbft/rpc/client/local"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/sync/errgroup"
 )
@@ -18,7 +20,9 @@ func run() error {
 	// app level context
 	ctx := context.Background()
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil)).With("node", os.Getenv("nodeId"))
+	nodeID := os.Getenv("nodeId")
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil)).With("node", nodeID)
 
 	// logger setup
 	logger.Info("good morning!")
@@ -37,8 +41,12 @@ func run() error {
 	}
 	defer pool.Close()
 
+	queries := db.New(pool)
+
 	node, err := NewNode("./cmt-home", pgConnectionString, &App{
+		pool: pool,
 		logger: logger,
+		queries: queries,
 	})
 	if err != nil {
 		return err
@@ -47,6 +55,14 @@ func run() error {
 			node.Stop()
 			node.Wait()
 	}()
+
+	rpc := local.New(node)
+
+	api := &ApiServer {
+		rpc: rpc,
+		queries: queries,
+		node: nodeID,
+	}
 
 	g, _ := errgroup.WithContext(ctx)
 
@@ -60,6 +76,15 @@ func run() error {
     <-c
 		
 		return nil
+	})
+
+	g.Go(func() error {
+		return api.Start()
+	})
+
+	g.Go(func() error {
+		time.Sleep(10 * time.Second)
+		return simulation(logger, nodeID)
 	})
 
 	return g.Wait()
