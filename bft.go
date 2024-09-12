@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/alecsavvy/clockwise/db"
 	"github.com/alecsavvy/clockwise/proto_gen"
 	abcitypes "github.com/cometbft/cometbft/abci/types"
 	v1 "github.com/cometbft/cometbft/api/cometbft/abci/v1"
@@ -49,6 +50,7 @@ func (a *App) FinalizeBlock(ctx context.Context, req *v1.FinalizeBlockRequest) (
 
 	// set ongoing tx for use in commit
 	a.onGoingTx = finalizeDbTx
+	qtx := db.New(a.onGoingTx)
 
 	var txs = make([]*abcitypes.ExecTxResult, len(req.Txs))
 
@@ -60,8 +62,21 @@ func (a *App) FinalizeBlock(ctx context.Context, req *v1.FinalizeBlockRequest) (
 				return err
 			}
 
+			txhash, err := ToTxHash(manageEntity)
+			if err != nil {
+				return err
+			}
+
 			switch manageEntity.Message.(type) {
 			case *proto_gen.ManageEntity_UserCreate:
+				err := qtx.CreateUser(ctx, db.CreateUserParams{
+					Handle: manageEntity.GetUserCreate().Handle,
+					TxHash: txhash,
+				})
+				if err != nil {
+					return err
+				}
+				return nil
 			case *proto_gen.ManageEntity_TrackCreate:
 			}
 
@@ -76,12 +91,11 @@ func (a *App) FinalizeBlock(ctx context.Context, req *v1.FinalizeBlockRequest) (
 		}
 	}
 
-	return &v1.FinalizeBlockResponse{}, nil
+	return &v1.FinalizeBlockResponse{TxResults: txs}, nil
 }
 
 // Commit implements types.Application.
 func (a *App) Commit(ctx context.Context, req *v1.CommitRequest) (*v1.CommitResponse, error) {
-
 	if a.onGoingTx == nil {
 		return &v1.CommitResponse{}, nil
 	}
@@ -90,5 +104,6 @@ func (a *App) Commit(ctx context.Context, req *v1.CommitRequest) (*v1.CommitResp
 	if err != nil {
 		a.logger.Error("could not commit txs")
 	}
+	a.logger.Info("committed")
 	return &v1.CommitResponse{}, nil
 }

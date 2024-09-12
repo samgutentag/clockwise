@@ -28,7 +28,7 @@ func (q *Queries) GetTxResult(ctx context.Context, txHash string) (TxResult, err
 }
 
 const getUsers = `-- name: GetUsers :many
-select id, handle, bio, tx_hash
+select handle, tx_hash
 from users
 order by handle
 `
@@ -42,12 +42,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(
-			&i.ID,
-			&i.Handle,
-			&i.Bio,
-			&i.TxHash,
-		); err != nil {
+		if err := rows.Scan(&i.Handle, &i.TxHash); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

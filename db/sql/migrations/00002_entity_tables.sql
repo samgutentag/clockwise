@@ -1,9 +1,6 @@
 -- +migrate Up
 create table users (
-    -- wallet address
-    id text primary key,
-    handle text not null,
-    bio text not null,
+    handle text primary key,
     tx_hash text not null
 );
 

@@ -1,3 +1,3 @@
 -- name: CreateUser :exec
-insert into users (id, handle, bio, tx_hash)
-values ($1, $2, $3, $4);
+insert into users (handle, tx_hash)
+values ($1, $2);

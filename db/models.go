@@ -69,8 +69,6 @@ type TxResult struct {
 }
 
 type User struct {
-	ID     string
 	Handle string
-	Bio    string
 	TxHash string
 }
