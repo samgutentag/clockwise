@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 
+	"github.com/alecsavvy/clockwise/proto_gen"
+	abcitypes "github.com/cometbft/cometbft/abci/types"
 	v1 "github.com/cometbft/cometbft/api/cometbft/abci/v1"
 	"github.com/jackc/pgx/v5"
+	"google.golang.org/protobuf/proto"
 )
 
 // CheckTx implements types.Application.
@@ -30,7 +33,7 @@ func (a *App) ProcessProposal(ctx context.Context, req *v1.ProcessProposalReques
 	a.logger.Info("i am processing a new block proposal", "height", req.Height)
 
 	// TODO: validate txs
-	
+
 	return &v1.ProcessProposalResponse{Status: v1.PROCESS_PROPOSAL_STATUS_ACCEPT}, nil
 }
 
@@ -47,6 +50,31 @@ func (a *App) FinalizeBlock(ctx context.Context, req *v1.FinalizeBlockRequest) (
 	// set ongoing tx for use in commit
 	a.onGoingTx = finalizeDbTx
 
+	var txs = make([]*abcitypes.ExecTxResult, len(req.Txs))
+
+	for i, tx := range req.Txs {
+		err := func() error {
+			manageEntity := &proto_gen.ManageEntity{}
+			err := proto.Unmarshal(tx, manageEntity)
+			if err != nil {
+				return err
+			}
+
+			switch manageEntity.Message.(type) {
+			case *proto_gen.ManageEntity_UserCreate:
+			case *proto_gen.ManageEntity_TrackCreate:
+			}
+
+			return nil
+		}()
+
+		if err != nil {
+			a.logger.Error("error with finalizing tx", "error", err)
+			txs[i] = &abcitypes.ExecTxResult{Code: 1}
+		} else {
+			txs[i] = &abcitypes.ExecTxResult{Code: v1.CodeTypeOK}
+		}
+	}
 
 	return &v1.FinalizeBlockResponse{}, nil
 }

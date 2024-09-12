@@ -7,23 +7,23 @@ import (
 )
 
 type ApiServer struct {
-	rpc *local.Local
+	rpc     *local.Local
 	queries *db.Queries
-	node string
+	node    string
 }
 
 func (s *ApiServer) Start() error {
 	e := echo.New()
 
 	e.HideBanner = true
-	
+
 	e.GET("/health_check", s.getHealth)
 
 	// e.GET("/users")
 	// e.GET("/tracks")
-	
-	// e.POST("/users")
-	// e.POST("/tracks")
+
+	// e.POST("/users/:handle")
+	// e.POST("/users/:handle/tracks/:title")
 
 	return e.Start(":8080")
 }
