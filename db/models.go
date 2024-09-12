@@ -48,27 +48,6 @@ type EventAttribute struct {
 	Value        pgtype.Text
 }
 
-type Follow struct {
-	FollowerID  string
-	FollowingID string
-	TxHash      string
-}
-
-type Repost struct {
-	ReposterID string
-	TrackID    string
-	TxHash     string
-}
-
-type Track struct {
-	ID          string
-	Title       string
-	StreamUrl   string
-	Description string
-	UserID      string
-	TxHash      string
-}
-
 type TxEvent struct {
 	Height       int64
 	Index        int32
