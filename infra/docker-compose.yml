@@ -9,6 +9,7 @@ services:
         NODE: "0"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db0?sslmode=disable
+      - nodeId=0
     restart: unless-stopped
     ports:
       - "6600:26656" # CometBFT P2P Server
@@ -18,7 +19,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.2
     depends_on:
-      - geth
       - postgres
 
   node-1:
@@ -31,6 +31,7 @@ services:
         NODE: "1"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db1?sslmode=disable
+      - nodeId=1
     restart: unless-stopped
     ports:
       - "6610:26656"
@@ -40,7 +41,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.3
     depends_on:
-      - geth
       - postgres
 
   node-2:
@@ -53,6 +53,7 @@ services:
         NODE: "2"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db2?sslmode=disable
+      - nodeId=2
     restart: unless-stopped
     ports:
       - "6620:26656"
@@ -62,7 +63,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.4
     depends_on:
-      - geth
       - postgres
 
   node-3:
@@ -75,6 +75,7 @@ services:
         NODE: "3"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db3?sslmode=disable
+      - nodeId=3
     restart: unless-stopped
     ports:
       - "6630:26656"
@@ -84,7 +85,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.5
     depends_on:
-      - geth
       - postgres
 
   node-4:
@@ -97,6 +97,7 @@ services:
         NODE: "4"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db4?sslmode=disable
+      - nodeId=4
     restart: unless-stopped
     ports:
       - "6640:26656"
@@ -106,7 +107,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.6
     depends_on:
-      - geth
       - postgres
 
   node-5:
@@ -119,6 +119,7 @@ services:
         NODE: "5"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db5?sslmode=disable
+      - nodeId=5
     restart: unless-stopped
     ports:
       - "6650:26656"
@@ -128,7 +129,6 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.7
     depends_on:
-      - geth
       - postgres
 
   node-6:
@@ -141,6 +141,7 @@ services:
         NODE: "6"
     environment:
       - pgConnectionString=postgresql://postgres:pass@discovery_db:5432/db6?sslmode=disable
+      - nodeId=6
     restart: unless-stopped
     ports:
       - "6660:26656"
@@ -150,49 +151,8 @@ services:
       audius-testnet:
         ipv4_address: 192.167.10.8
     depends_on:
-      - geth
       - postgres
 
-  loadtest:
-    container_name: moshpit
-    build:
-      context: ../
-      dockerfile: ./infra/Dockerfile.loadtest
-      target: final
-    restart: unless-stopped
-    networks:
-      - audius-testnet
-    ports:
-      - "8080:8080"
-    depends_on:
-      - node-0
-      - node-1
-      - node-2
-      - node-3
-      - node-4
-      - node-5
-      - node-6
-    profiles:
-      - loadtest
-
-  geth:
-    container_name: ethereum.docker.co
-    image: ethereum/client-go:latest
-    command:
-      - "--dev"
-      - "--http"
-      - "--http.addr"
-      - "0.0.0.0"
-      - "--http.api"
-      - "personal,eth,net,web3,txpool,miner"
-      - "--verbosity"
-      - "3"
-    ports:
-      - "8545:8545"
-      - "8546:8546"
-    networks:
-      audius-testnet:
-        ipv4_address: 192.167.10.9
 
   postgres:
     image: postgres:15

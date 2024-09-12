@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package audius;
+
+option go_package = "./;proto_gen";
+
+message ManageEntity {
+  string signature = 1;
+  oneof Message {
+    UserCreate userCreate = 100;
+    TrackCreate trackCreate = 101;
+  }
+}
+
+message UserCreate {
+  string id = 1;
+  string handle = 2;
+  string tx_hash = 3;
+}
+
+message TrackCreate {
+  string id = 1;
+  string title = 2;
+  string stream_url = 3;
+  string user_id = 4;
+  string tx_hash = 5;
+}
+

@@ -8,20 +8,16 @@ up:
 
 down:
 	cd infra && docker compose --profile loadtest down
-	rm -rf testnet-home
 
 init:
 	cometbft init --home ./cmt-home
 
-init-testnet:
+testnet:
 	cometbft testnet --n=3 --v=4 --config ./infra/config_template.toml --o=./testnet-home --starting-ip-address 192.167.10.2
 
 gen:
-	cd core/db && sqlc generate
-	protoc --go_out=./protocol --go-grpc_out=./protocol ./protocol/protocol.proto
-	go run github.com/99designs/gqlgen generate
-	go run github.com/Khan/genqlient
-	make init-testnet
+	cd db && sqlc generate
+	protoc --go_out=./proto_gen --go-grpc_out=./proto_gen ./audius.proto
 	go mod tidy
 
 deps:
